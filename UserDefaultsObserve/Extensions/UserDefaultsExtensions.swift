@@ -13,3 +13,9 @@ extension UserDefaults {
         static let demoCount = "demoCount"
     }
 }
+
+extension UserDefaults {
+    @objc dynamic var demoCount:Int {
+        return integer(forKey: Key.demoCount)
+    }
+}

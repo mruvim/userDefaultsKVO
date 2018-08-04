@@ -10,6 +10,10 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    /// Vars
+    private var countObserver:NSKeyValueObservation?
+    
+    /// IBOutlet
     @IBOutlet weak var countLabel: UILabel!
     
     override func viewDidLoad() {
@@ -41,27 +45,15 @@ extension ViewController {
     
     private func setupObserver() {
         let defaults = UserDefaults.standard
-        defaults.addObserver(self, forKeyPath:UserDefaults.Key.demoCount, options: [.initial, .new], context:nil)
+        countObserver = defaults.observe(\.demoCount, options: [.initial, .new]) { [weak self] (defaults, change) in
+            guard let weakSelf = self, let count = change.newValue else { return }
+            weakSelf.updateLabelCount(count: count)
+        }
     }
     
     private func removeObserver() {
-        let defaults = UserDefaults.standard
-        defaults.removeObserver(self, forKeyPath: UserDefaults.Key.demoCount, context: nil)
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?,
-                               of object: Any?,
-                               change: [NSKeyValueChangeKey : Any]?,
-                               context: UnsafeMutableRawPointer?) {
-        
-        guard keyPath == UserDefaults.Key.demoCount else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-            return
-        }
-        
-        if let count = change?[.newKey] as? Int {
-            updateLabelCount(count: count)
-        }
+        countObserver?.invalidate()
+        countObserver = nil
     }
 }
 
