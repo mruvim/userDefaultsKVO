@@ -1,4 +1,4 @@
 # UserDefaultsKVO
 Language: Swift 4
 
-An example of KVO UserDefaults value 
+An example of UserDefaults block based KVO
